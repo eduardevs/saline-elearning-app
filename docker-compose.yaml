@@ -1,6 +1,66 @@
 version: "3.8"
-
 services:
   client:
+    image: client-dev-i
     build:
       context: ./client
+      dockerfile: Dockerfile.dev
+    container_name: saline-front
+    volumes:
+      - ./client:/client
+      - node_modules:/client/node_modules/
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+  alpine:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        container_name: saline-back
+        restart: on-failure
+        ports:
+            - "1234:80"
+        volumes:
+            - ./conf/site.conf:/etc/nginx/http.d/default.conf
+            - ./server:/var/www/html
+        networks:
+            - acpSymfony
+
+  db:
+        image: mariadb:10.8.2
+        container_name: saline-db
+        restart: always
+        volumes:
+            - db-data:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_PASS}
+        networks:
+            - acpSymfony
+
+  phpmyadmin:
+        image: phpmyadmin:latest
+        container_name: saline-pma
+        restart: always
+        ports:
+            - '8080:80'
+        environment:
+            # demande le nom du server
+            #- PMA_ARBITRARY=1
+            # Pour ne pas avoir à préciser le nom du server
+            - PMA_HOST=db
+            - PMA_PASSWORD=${PMA_PASS}
+        depends_on:
+            - db
+        networks:
+            - acpSymfony
+
+
+volumes:
+    db-data:
+    node_modules:
+
+
+networks:
+    acpSymfony:
