@@ -7,7 +7,7 @@ docker exec symfony_docker composer create-project symfony/skeleton html
 
 
 // Pensez ensuite à aller exécuter toutes vos commandes depuis l'intérieur du container.
-Par exemple :
+Par exemple : test
 
 cd symfony_project
 composer require orm
