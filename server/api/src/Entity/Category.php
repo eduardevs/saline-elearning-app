@@ -21,9 +21,13 @@ class Category
     #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'categories')]
     private Collection $course;
 
+    #[ORM\ManyToMany(targetEntity: Forum::class, mappedBy: 'category')]
+    private Collection $forums;
+
     public function __construct()
     {
         $this->course = new ArrayCollection();
+        $this->forums = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -63,6 +67,33 @@ class Category
     public function removeCourse(Course $course): self
     {
         $this->course->removeElement($course);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Forum>
+     */
+    public function getForums(): Collection
+    {
+        return $this->forums;
+    }
+
+    public function addForum(Forum $forum): self
+    {
+        if (!$this->forums->contains($forum)) {
+            $this->forums->add($forum);
+            $forum->addCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForum(Forum $forum): self
+    {
+        if ($this->forums->removeElement($forum)) {
+            $forum->removeCategory($this);
+        }
 
         return $this;
     }

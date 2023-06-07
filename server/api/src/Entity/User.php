@@ -46,12 +46,20 @@ class User
     #[ORM\OneToMany(mappedBy: 'professor', targetEntity: Course::class)]
     private Collection $coursesGiven;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Forum::class)]
+    private Collection $forums;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Response::class)]
+    private Collection $responses;
+
     public function __construct()
     {
         $this->courses = new ArrayCollection();
         $this->instruments = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->coursesGiven = new ArrayCollection();
+        $this->forums = new ArrayCollection();
+        $this->responses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -233,6 +241,66 @@ class User
             // set the owning side to null (unless already changed)
             if ($coursesGiven->getProfessor() === $this) {
                 $coursesGiven->setProfessor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Forum>
+     */
+    public function getForums(): Collection
+    {
+        return $this->forums;
+    }
+
+    public function addForum(Forum $forum): self
+    {
+        if (!$this->forums->contains($forum)) {
+            $this->forums->add($forum);
+            $forum->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForum(Forum $forum): self
+    {
+        if ($this->forums->removeElement($forum)) {
+            // set the owning side to null (unless already changed)
+            if ($forum->getAuthor() === $this) {
+                $forum->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Response>
+     */
+    public function getResponses(): Collection
+    {
+        return $this->responses;
+    }
+
+    public function addResponse(Response $response): self
+    {
+        if (!$this->responses->contains($response)) {
+            $this->responses->add($response);
+            $response->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeResponse(Response $response): self
+    {
+        if ($this->responses->removeElement($response)) {
+            // set the owning side to null (unless already changed)
+            if ($response->getAuthor() === $this) {
+                $response->setAuthor(null);
             }
         }
 
