@@ -18,7 +18,11 @@
         "symfony/framework-bundle": "6.3.*",
         "symfony/property-access": "6.3.*",
         "symfony/runtime": "6.3.*",
+<<<<<<< HEAD
         "symfony/serializer": "6.3.*",
+=======
+        "symfony/security-bundle": "6.3.*",
+>>>>>>> 6409e03 (security.yaml)
         "symfony/security-csrf": "6.3.*",
         "symfony/twig-bundle": "6.3.*",
         "symfony/validator": "6.3.*",
