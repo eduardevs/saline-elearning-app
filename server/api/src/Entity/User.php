@@ -7,11 +7,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+<<<<<<< HEAD
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
+=======
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+>>>>>>> 6fe5016 (hasher_password)
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+class User implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -131,6 +136,17 @@ class User
         $this->password = $password;
 
         return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->id;
     }
 
     public function getRoles(): array
