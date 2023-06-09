@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 >>>>>>> 6fe5016 (hasher_password)
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -140,7 +140,7 @@ class User implements PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        // Si vous stockez des données temporaires sensibles sur l'utilisateur, effacez-les ici
         // $this->plainPassword = null;
     }
 
@@ -230,7 +230,7 @@ class User implements PasswordAuthenticatedUserInterface
     public function removeComment(Comment $comment): self
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($comment->getUser() === $this) {
                 $comment->setUser(null);
             }
@@ -260,7 +260,7 @@ class User implements PasswordAuthenticatedUserInterface
     public function removeCoursesGiven(Course $coursesGiven): self
     {
         if ($this->coursesGiven->removeElement($coursesGiven)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($coursesGiven->getProfessor() === $this) {
                 $coursesGiven->setProfessor(null);
             }
@@ -290,7 +290,7 @@ class User implements PasswordAuthenticatedUserInterface
     public function removeForum(Forum $forum): self
     {
         if ($this->forums->removeElement($forum)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($forum->getAuthor() === $this) {
                 $forum->setAuthor(null);
             }
@@ -320,7 +320,7 @@ class User implements PasswordAuthenticatedUserInterface
     public function removeResponse(Response $response): self
     {
         if ($this->responses->removeElement($response)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($response->getAuthor() === $this) {
                 $response->setAuthor(null);
             }
