@@ -50,4 +50,38 @@ class CourseController extends AbstractController
         return new JsonResponse($serializedCourses, 200, [], true);
 
     }
+
+    #[Route('/course-list-by-professor/{profId}', name: 'course-list-by-prof', methods: ['GET'])]
+    public function getCourseListByProf(int $profId, CourseRepository $courseRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    {
+        $user = $userRepository->find($profId);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'Professor not found'], 404);
+        }
+
+        $courses = $courseRepository->findByProf($user);
+
+        $serializedCourses = $serializer->serialize($courses, 'json', ['groups' => ['course','course_users', 'course_professor', 'course_composers']]);
+
+        return new JsonResponse($serializedCourses, 200, [], true);
+
+    }
+
+    #[Route('/course-list-by-instrument/{instrumentId}', name: 'course-list-by-instrument', methods: ['GET'])]
+    public function getCourseListByInstrument(int $instrumentId, CourseRepository $courseRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    {
+        $user = $userRepository->find($instrumentId);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'Instrument not found'], 404);
+        }
+
+        $courses = $courseRepository->findByInstrument($user);
+
+        $serializedCourses = $serializer->serialize($courses, 'json', ['groups' => ['course','course_users', 'course_professor', 'course_composers']]);
+
+        return new JsonResponse($serializedCourses, 200, [], true);
+
+    }
 }

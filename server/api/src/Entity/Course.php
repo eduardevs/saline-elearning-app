@@ -64,6 +64,10 @@ class Course
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'course')]
     private Collection $categories;
 
+    #[ORM\ManyToOne(inversedBy: 'courses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Instrument $instrument = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -234,6 +238,18 @@ class Course
         if ($this->categories->removeElement($category)) {
             $category->removeCourse($this);
         }
+
+        return $this;
+    }
+
+    public function getInstrument(): ?Instrument
+    {
+        return $this->instrument;
+    }
+
+    public function setInstrument(?Instrument $instrument): self
+    {
+        $this->instrument = $instrument;
 
         return $this;
     }

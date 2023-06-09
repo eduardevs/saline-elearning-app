@@ -50,6 +50,26 @@ class CourseRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findByProf(User $user)
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.professor', 'u')
+            ->where('u = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByInstrument(User $user)
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.instrument', 'u')
+            ->where('u = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Course[] Returns an array of Course objects
 //     */
