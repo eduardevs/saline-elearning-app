@@ -14,16 +14,7 @@ use App\Repository\UserRepository;
 class CourseController extends AbstractController
 {
 
-    #[Route('/course', name: 'app_course')]
-    public function index(): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/CourseController.php',
-        ]);
-    }
-
-    #[Route('/course-list', name: 'course-list', methods: ['GET'])]
+    #[Route('/courses', name: 'course-list', methods: ['GET'])]
     public function getCourseList(CourseRepository $courseRepository, SerializerInterface $serializer): JsonResponse
     {
         $coursesList = $courseRepository->findAll();
@@ -34,7 +25,7 @@ class CourseController extends AbstractController
 
     }
 
-    #[Route('/course-list-by-user/{userId}', name: 'course-list-by-user', methods: ['GET'])]
+    #[Route('/courses/users/{userId}', name: 'course-list-by-user', methods: ['GET'])]
     public function getCourseListByUser(int $userId, CourseRepository $courseRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $user = $userRepository->find($userId);
@@ -51,7 +42,7 @@ class CourseController extends AbstractController
 
     }
 
-    #[Route('/course-list-by-professor/{profId}', name: 'course-list-by-prof', methods: ['GET'])]
+    #[Route('/courses/professors/{profId}', name: 'course-list-by-prof', methods: ['GET'])]
     public function getCourseListByProf(int $profId, CourseRepository $courseRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $user = $userRepository->find($profId);
@@ -68,7 +59,7 @@ class CourseController extends AbstractController
 
     }
 
-    #[Route('/course-list-by-instrument/{instrumentId}', name: 'course-list-by-instrument', methods: ['GET'])]
+    #[Route('/courses/instruments/{instrumentId}', name: 'course-list-by-instrument', methods: ['GET'])]
     public function getCourseListByInstrument(int $instrumentId, CourseRepository $courseRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $user = $userRepository->find($instrumentId);
