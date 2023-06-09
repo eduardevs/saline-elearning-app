@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
@@ -17,9 +19,11 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user', 'course_users'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user', 'course_users'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
@@ -35,6 +39,8 @@ class User
     private array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
+    #[Groups(['user'])]
+    #[MaxDepth(1)]
     private Collection $courses;
 
     #[ORM\ManyToMany(targetEntity: Instrument::class, inversedBy: 'users')]

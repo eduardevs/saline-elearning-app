@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ComposerRepository::class)]
 class Composer
@@ -17,6 +18,7 @@ class Composer
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['composer', 'course_composers'])]
     private ?string $fullName = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -26,6 +28,8 @@ class Composer
     private Collection $instrument;
 
     #[ORM\ManyToMany(targetEntity: Course::class, mappedBy: 'composers')]
+    #[Groups(['composer'])]
+    #[MaxDepth(1)]
     private Collection $courses;
 
     public function __construct()

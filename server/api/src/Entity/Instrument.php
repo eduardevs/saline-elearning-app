@@ -28,10 +28,14 @@ class Instrument
     #[ORM\Column(type: Types::ARRAY)]
     private array $level = [];
 
+    #[ORM\OneToMany(mappedBy: 'instrument', targetEntity: Course::class)]
+    private Collection $courses;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->composers = new ArrayCollection();
+        $this->courses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,6 +117,36 @@ class Instrument
     public function setLevel(array $level): self
     {
         $this->level = $level;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Course>
+     */
+    public function getCourses(): Collection
+    {
+        return $this->courses;
+    }
+
+    public function addCourse(Course $course): self
+    {
+        if (!$this->courses->contains($course)) {
+            $this->courses->add($course);
+            $course->setInstrument($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourse(Course $course): self
+    {
+        if ($this->courses->removeElement($course)) {
+            // set the owning side to null (unless already changed)
+            if ($course->getInstrument() === $this) {
+                $course->setInstrument(null);
+            }
+        }
 
         return $this;
     }
