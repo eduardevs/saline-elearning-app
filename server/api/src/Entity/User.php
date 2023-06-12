@@ -7,13 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-<<<<<<< HEAD
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
-=======
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
->>>>>>> 6fe5016 (hasher_password)
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -40,7 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::SIMPLE_ARRAY)]
     private array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
@@ -148,10 +145,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return (string) $this->id;
     }
-
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        // array_unique
+        return $roles;
     }
 
     public function setRoles(array $roles): self

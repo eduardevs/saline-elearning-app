@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230607143659 extends AbstractMigration
+final class Version20230612143747 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,13 +25,13 @@ final class Version20230607143659 extends AbstractMigration
         $this->addSql('CREATE TABLE comment (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, title VARCHAR(255) DEFAULT NULL, content LONGTEXT NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_9474526CA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE composer (id INT AUTO_INCREMENT NOT NULL, full_name VARCHAR(255) NOT NULL, biography LONGTEXT NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE composer_instrument (composer_id INT NOT NULL, instrument_id INT NOT NULL, INDEX IDX_D23DB0487A8D2620 (composer_id), INDEX IDX_D23DB048CF11D9C (instrument_id), PRIMARY KEY(composer_id, instrument_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE course (id INT AUTO_INCREMENT NOT NULL, professor_id INT NOT NULL, title VARCHAR(255) NOT NULL, description LONGTEXT NOT NULL, price DOUBLE PRECISION DEFAULT NULL, rating_score INT DEFAULT NULL, files LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:array)\', link_video VARCHAR(255) NOT NULL, INDEX IDX_169E6FB97D2D84D5 (professor_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE course (id INT AUTO_INCREMENT NOT NULL, professor_id INT NOT NULL, instrument_id INT NOT NULL, title VARCHAR(255) NOT NULL, description LONGTEXT NOT NULL, price DOUBLE PRECISION DEFAULT NULL, rating_score INT DEFAULT NULL, files LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:array)\', link_video VARCHAR(255) NOT NULL, INDEX IDX_169E6FB97D2D84D5 (professor_id), INDEX IDX_169E6FB9CF11D9C (instrument_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE course_composer (course_id INT NOT NULL, composer_id INT NOT NULL, INDEX IDX_31C76B8E591CC992 (course_id), INDEX IDX_31C76B8E7A8D2620 (composer_id), PRIMARY KEY(course_id, composer_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE forum (id INT AUTO_INCREMENT NOT NULL, author_id INT NOT NULL, subject VARCHAR(255) NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_852BBECDF675F31B (author_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE forum_category (forum_id INT NOT NULL, category_id INT NOT NULL, INDEX IDX_21BF942629CCBAD0 (forum_id), INDEX IDX_21BF942612469DE2 (category_id), PRIMARY KEY(forum_id, category_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE instrument (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, level LONGTEXT NOT NULL COMMENT \'(DC2Type:array)\', PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE response (id INT AUTO_INCREMENT NOT NULL, author_id INT NOT NULL, forum_id INT NOT NULL, content LONGTEXT NOT NULL, created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', INDEX IDX_3E7B0BFBF675F31B (author_id), INDEX IDX_3E7B0BFB29CCBAD0 (forum_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, photo VARCHAR(255) DEFAULT NULL, password VARCHAR(255) NOT NULL, roles LONGTEXT NOT NULL COMMENT \'(DC2Type:array)\', PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE user (id INT AUTO_INCREMENT NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, photo VARCHAR(255) DEFAULT NULL, password VARCHAR(255) NOT NULL, roles LONGTEXT NOT NULL COMMENT \'(DC2Type:simple_array)\', PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user_course (user_id INT NOT NULL, course_id INT NOT NULL, INDEX IDX_73CC7484A76ED395 (user_id), INDEX IDX_73CC7484591CC992 (course_id), PRIMARY KEY(user_id, course_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE user_instrument (user_id INT NOT NULL, instrument_id INT NOT NULL, INDEX IDX_9BD8AF31A76ED395 (user_id), INDEX IDX_9BD8AF31CF11D9C (instrument_id), PRIMARY KEY(user_id, instrument_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE category_course ADD CONSTRAINT FK_1976A5C212469DE2 FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE');
@@ -40,6 +40,7 @@ final class Version20230607143659 extends AbstractMigration
         $this->addSql('ALTER TABLE composer_instrument ADD CONSTRAINT FK_D23DB0487A8D2620 FOREIGN KEY (composer_id) REFERENCES composer (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE composer_instrument ADD CONSTRAINT FK_D23DB048CF11D9C FOREIGN KEY (instrument_id) REFERENCES instrument (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE course ADD CONSTRAINT FK_169E6FB97D2D84D5 FOREIGN KEY (professor_id) REFERENCES user (id)');
+        $this->addSql('ALTER TABLE course ADD CONSTRAINT FK_169E6FB9CF11D9C FOREIGN KEY (instrument_id) REFERENCES instrument (id)');
         $this->addSql('ALTER TABLE course_composer ADD CONSTRAINT FK_31C76B8E591CC992 FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE course_composer ADD CONSTRAINT FK_31C76B8E7A8D2620 FOREIGN KEY (composer_id) REFERENCES composer (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE forum ADD CONSTRAINT FK_852BBECDF675F31B FOREIGN KEY (author_id) REFERENCES user (id)');
@@ -62,6 +63,7 @@ final class Version20230607143659 extends AbstractMigration
         $this->addSql('ALTER TABLE composer_instrument DROP FOREIGN KEY FK_D23DB0487A8D2620');
         $this->addSql('ALTER TABLE composer_instrument DROP FOREIGN KEY FK_D23DB048CF11D9C');
         $this->addSql('ALTER TABLE course DROP FOREIGN KEY FK_169E6FB97D2D84D5');
+        $this->addSql('ALTER TABLE course DROP FOREIGN KEY FK_169E6FB9CF11D9C');
         $this->addSql('ALTER TABLE course_composer DROP FOREIGN KEY FK_31C76B8E591CC992');
         $this->addSql('ALTER TABLE course_composer DROP FOREIGN KEY FK_31C76B8E7A8D2620');
         $this->addSql('ALTER TABLE forum DROP FOREIGN KEY FK_852BBECDF675F31B');
