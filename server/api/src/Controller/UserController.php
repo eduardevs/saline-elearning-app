@@ -28,9 +28,10 @@ class UserController extends AbstractController
     #[Route('admin/users', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
-        dd($userRepository->findAll());
+        // dd($userRepository->findAll());
         $usersList = $userRepository->findAll();
-        $jsonUsersList = $serializer->serialize($usersList, 'json');
+        $jsonUsersList = $serializer->serialize($usersList, 'json', ['groups' => ['course_users']]);
+        // dd($jsonUsersList);
         return new JsonResponse($jsonUsersList, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
