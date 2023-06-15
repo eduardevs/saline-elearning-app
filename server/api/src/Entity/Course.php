@@ -7,6 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Annotation\Groups;
+use App\Entity\User;
+use App\Entity\Composer;
+
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 class Course
@@ -14,38 +19,54 @@ class Course
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['course'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['course'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['course'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['course'])]
     private ?float $price = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['course'])]
     private ?int $ratingScore = null;
 
     #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private array $files = [];
 
     #[ORM\Column(length: 255)]
+    #[Groups(['course'])]
     private ?string $linkVideo = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'courses')]
+    #[Groups(['course_users'])]
+    #[MaxDepth(1)]
     private Collection $users;
 
     #[ORM\ManyToOne(inversedBy: 'coursesGiven')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['course_professor'])]
+    #[MaxDepth(1)]
     private ?User $professor = null;
 
     #[ORM\ManyToMany(targetEntity: Composer::class, inversedBy: 'courses')]
+    #[Groups(['course_composers'])]
+    #[MaxDepth(1)]
     private Collection $composers;
 
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'course')]
     private Collection $categories;
+
+    #[ORM\ManyToOne(inversedBy: 'courses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Instrument $instrument = null;
 
     public function __construct()
     {
@@ -217,6 +238,18 @@ class Course
         if ($this->categories->removeElement($category)) {
             $category->removeCourse($this);
         }
+
+        return $this;
+    }
+
+    public function getInstrument(): ?Instrument
+    {
+        return $this->instrument;
+    }
+
+    public function setInstrument(?Instrument $instrument): self
+    {
+        $this->instrument = $instrument;
 
         return $this;
     }

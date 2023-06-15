@@ -7,9 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,9 +21,11 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user', 'course_users'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user', 'course_users'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
@@ -31,10 +37,12 @@ class User
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::SIMPLE_ARRAY)]
     private array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
+    #[Groups(['user'])]
+    #[MaxDepth(1)]
     private Collection $courses;
 
     #[ORM\ManyToMany(targetEntity: Instrument::class, inversedBy: 'users')]
@@ -127,9 +135,24 @@ class User
         return $this;
     }
 
+    public function eraseCredentials(): void
+    {
+        // Si vous stockez des données temporaires sensibles sur l'utilisateur, effacez-les ici
+        // $this->plainPassword = null;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->id;
+    }
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        // array_unique
+        return $roles;
     }
 
     public function setRoles(array $roles): self
@@ -208,7 +231,7 @@ class User
     public function removeComment(Comment $comment): self
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($comment->getUser() === $this) {
                 $comment->setUser(null);
             }
@@ -238,7 +261,7 @@ class User
     public function removeCoursesGiven(Course $coursesGiven): self
     {
         if ($this->coursesGiven->removeElement($coursesGiven)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($coursesGiven->getProfessor() === $this) {
                 $coursesGiven->setProfessor(null);
             }
@@ -268,7 +291,7 @@ class User
     public function removeForum(Forum $forum): self
     {
         if ($this->forums->removeElement($forum)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($forum->getAuthor() === $this) {
                 $forum->setAuthor(null);
             }
@@ -298,7 +321,7 @@ class User
     public function removeResponse(Response $response): self
     {
         if ($this->responses->removeElement($response)) {
-            // set the owning side to null (unless already changed)
+            // Définissez le côté propriétaire à null (sauf si déjà modifié)
             if ($response->getAuthor() === $this) {
                 $response->setAuthor(null);
             }
